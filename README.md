@@ -56,7 +56,7 @@ Compared with conventional fusion pipelines that are heavily tied to a fixed sen
 
 Ultra-Fusion is evaluated on:
 
-- [**M3DGR**](https://github.com/sjtuyinjie/M3DGR) (including simulation extension),
+- [**M3DGR**](https://github.com/sjtuyinjie/M3DGR) (wheeled, real+sim, sensor degradation),
 - [**M2DGR-Plus**](https://github.com/SJTU-ViSYS/M2DGR-plus)(wheeled),
 - [**KAIST (Complex Urban Dataset)**](https://sites.google.com/view/complex-urban-dataset)(autonomous driving),
 - [**GrandTour**](https://github.com/leggedrobotics/grand_tour_dataset) (legged),

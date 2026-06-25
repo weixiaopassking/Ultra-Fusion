@@ -82,32 +82,53 @@ Across these datasets, the paper reports competitive localization performance an
 
 ---
 
-## ⚙️1. Prerequisites & Installation
+## ⚙️ 1. Prerequisites & Installation
 
-The public runtime is tested on Ubuntu 20.04 + ROS Noetic. The Docker image is
-only the ROS/runtime environment: it contains ROS Noetic, rosbag, RViz, Ceres,
-yaml-cpp, and the required system libraries. It does not contain the
-Ultra-Fusion source tree or the release `.deb`.
+**Tested platform:** Ubuntu 20.04 + ROS Noetic.
 
-### 1.1 Pull the Docker Image for Environments
+This release ships as a prebuilt `.deb` package (`uf_node` + configs + RViz layout).
+Full source code will be released after paper acceptance.
 
+> [!TIP]
+> **We recommend the Docker path (Option A)** — it avoids dependency conflicts on your host and matches our tested runtime environment. Use native install (Option B) only if you prefer running directly on the host.
 
+| Path | Best for | What you install |
+| --- | --- | --- |
+| **[Option A — Docker](#option-a--docker-install-recommended)** ⭐ | Quick start, reproducible demos | Runtime image in container, then the `.deb` inside |
+| **[Option B — Native](#option-b--native-install)** | Long-term host deployment | ROS Noetic + deps on host, then the `.deb` |
+
+Both paths end with the same `uf_node` binary and config files under `/opt/ultrafusion/`.
+
+---
+
+### Option A — Docker install (recommended) ⭐
+
+The Docker image provides the **ROS/runtime environment** (Noetic, RViz, Ceres, yaml-cpp, system libs).
+It does **not** include the Ultra-Fusion binary — install the `.deb` inside the container after starting it.
+
+**Step 1 — Clone this repo (needed for install scripts)**
 
 ```bash
-#Alibaba Cloud ACR:
+git clone https://github.com/sjtuyinjie/Ultra-Fusion.git
+cd Ultra-Fusion
+```
+
+**Step 2 — Pull the runtime image**
+
+```bash
+# Alibaba Cloud ACR (recommended in China):
 docker pull registry.cn-hangzhou.aliyuncs.com/bit_robot_image/ultrafusion:0.1.0
 
-#Docker Hub:
+# Docker Hub:
 docker pull maotiandocker/ultrafusion:0.1.0
 
-#Or build the public runtime image from the Dockerfile:
+# Or build locally:
 docker build -t ultrafusion:0.1.0 .
 ```
 
-### 1.2 Install the Release Deb of Ultra-Fusion
+**Step 3 — Start a container with GUI support**
 
-Start a container. The `/media` mount is optional, but convenient when rosbag
-files are stored on the host under `/media`.
+Mount `/media` if your rosbags live on the host under `/media`.
 
 ```bash
 xhost +local:docker
@@ -117,42 +138,84 @@ docker run --rm -it --net=host --ipc=host \
   -e QT_X11_NO_MITSHM=1 \
   -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
   -v /media:/media:ro \
+  -v "$(pwd)":/workspace \
   registry.cn-hangzhou.aliyuncs.com/bit_robot_image/ultrafusion:0.1.0
 ```
 
-Inside the container, download and install the release package. The same deb is
-available from GitHub Releases and the project mirror:
+**Step 4 — Install the release package inside the container**
 
 ```bash
-wget -O /tmp/ultrafusion.deb \
-  https://github.com/sjtuyinjie/Ultra-Fusion/releases/download/v0.1.0/ultrafusion_0.1.0_amd64.deb
-
-# Mirror:
-# wget -O /tmp/ultrafusion.deb \
-#   http://47.100.60.229:8088/loc_map/releases/ultrafusion/ultrafusion_0.1.0_amd64.deb
-
-echo "c9a40d62df6100006431598d672c943f23f116e973e9c3b111d76d76c059196c  /tmp/ultrafusion.deb" | sha256sum -c -
-
-dpkg -i /tmp/ultrafusion.deb
+cd /workspace
+./scripts/install_ultrafusion_deb.sh
+source /opt/ros/noetic/setup.bash
 ```
 
-The deb installs:
+Use `./scripts/install_ultrafusion_deb.sh --mirror` if GitHub Releases is slow or unreachable.
 
-- `/opt/ultrafusion/bin/uf_node`
-- `/usr/bin/uf-node` and `/usr/bin/uf_node`
-- `/opt/ultrafusion/config/m3dgr`
-- `/opt/ultrafusion/config/m2p`
-- `/opt/ultrafusion/config/lvig`
-- `/opt/ultrafusion/config/kaist`
-- `/opt/ultrafusion/config/groundtour`
-- `/opt/ultrafusion/rviz/lio.rviz`
-
-Open the included RViz layout with:
+**Step 5 — Verify**
 
 ```bash
+which uf_node
 rviz -d /opt/ultrafusion/rviz/lio.rviz
 ```
-## 2 Run Ultra-Fusion on Five benchmakrs
+
+You are ready to run demos in [§2](#2-run-ultra-fusion-on-five-benchmarks).
+
+---
+
+### Option B — Native install
+
+Install ROS and runtime libraries directly on Ubuntu 20.04, then install the release package.
+Choose this path if you do not use Docker or need a persistent host setup.
+
+**Step 1 — Clone and install dependencies**
+
+```bash
+git clone https://github.com/sjtuyinjie/Ultra-Fusion.git
+cd Ultra-Fusion
+./scripts/install_native_deps.sh
+```
+
+This script installs ROS Noetic, PCL/OpenCV/Eigen, and builds Ceres 2.1.0 and yaml-cpp 0.8.0.
+
+**Step 2 — Install Ultra-Fusion**
+
+```bash
+./scripts/install_ultrafusion_deb.sh
+```
+
+**Step 3 — Source ROS in every new shell**
+
+```bash
+source /opt/ros/noetic/setup.bash
+```
+
+**Step 4 — Verify**
+
+```bash
+which uf_node
+rviz -d /opt/ultrafusion/rviz/lio.rviz
+```
+
+---
+
+### Installed files
+
+The `.deb` installs:
+
+| Path | Description |
+| --- | --- |
+| `/opt/ultrafusion/bin/uf_node` | Main executable |
+| `/usr/bin/uf_node`, `/usr/bin/uf-node` | CLI shortcuts |
+| `/opt/ultrafusion/config/m3dgr` | M3DGR profiles |
+| `/opt/ultrafusion/config/m2p` | M2DGR-Plus profile |
+| `/opt/ultrafusion/config/lvig` | MARS-LVIG profile |
+| `/opt/ultrafusion/config/kaist` | KAIST profile |
+| `/opt/ultrafusion/config/groundtour` | GrandTour profile |
+| `/opt/ultrafusion/rviz/lio.rviz` | Default RViz layout |
+
+---
+## 2. Run Ultra-Fusion on Five Benchmarks
 ### 🔥2.1 Run Ultra-Fusion on M3DGR
 Download [**M3DGR**](https://github.com/sjtuyinjie/M3DGR) bags and give a star.
 Start ROS and play your bag in the usual ROS way. Use one terminal for

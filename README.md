@@ -7,8 +7,8 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2606.21223-b31b1b)](https://arxiv.org/abs/2606.21223)
 [![Dataset](https://img.shields.io/badge/Dataset-M3DGR-orange)](https://github.com/sjtuyinjie/M3DGR)
 [![Video](https://img.shields.io/badge/Video-Youtube-red)](https://www.youtube.com/watch?v=ekzD9ovd1SQ)
-[![License](https://img.shields.io/badge/License-MIT-yellow)](#license)
-[![Platform](https://img.shields.io/badge/Platforms-Ground%20%7C%20Legged%20%7C%20Aerial-green)](#cross-platform-results)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](#5-license--acknowledgements)
+[![Platform](https://img.shields.io/badge/Platforms-Ground%20%7C%20Legged%20%7C%20Aerial-green)](#42-cross-platform-results)
 
 
 </div>
@@ -17,14 +17,38 @@
 
 ---
 
+Ultra-Fusion is a tightly-coupled multi-sensor SLAM framework for intelligent transportation systems (ITS). It targets real-world deployment where **sensor degradation** (poor illumination, LiDAR degeneracy, wheel slippage, GNSS outage) and **spatiotemporal miscalibration** are common.
 
-Ultra-Fusion is a tightly-coupled multi-sensor SLAM/localization framework for intelligent transportation systems (ITS).
-It is designed for real deployment where sensor degradation (illumination changes, LiDAR degeneracy, wheel slippage, GNSS outage) and spatiotemporal miscalibration are common.
+Within one configurable optimization framework, Ultra-Fusion supports **WIO, VIO, LIO, and LVIO**, with optional wheel/GNSS fusion and online calibration.
 
-The system unifies WIO, VIO, LIO, and LVIO in one configurable optimization framework, with optional wheel/GNSS fusion and online calibration.
+
+## Contents
+
+- [Overview](#overview)
+  - [Highlights](#highlights)
+  - [Method Overview](#method-overview)
+  - [Why Ultra-Fusion](#why-ultra-fusion)
+  - [Benchmarks and Findings](#benchmarks-and-findings)
+- [1. Prerequisites & Installation](#1-prerequisites--installation)
+  - [Option A — Docker (recommended)](#option-a--docker-install-recommended-)
+  - [Option B — Native install](#option-b--native-install)
+  - [Installed files](#installed-files)
+- [2. Run on Five Benchmarks](#2-run-on-five-benchmarks)
+  - [2.1 M3DGR](#21-m3dgr)
+  - [2.2 Other datasets](#22-other-datasets)
+- [3. Custom Profiles](#3-custom-profiles)
+  - [3.1 Fusion modes](#31-fusion-modes)
+  - [3.2 Camera intrinsics](#32-camera-intrinsics)
+  - [3.3 GNSS fusion](#33-gnss-fusion)
+  - [3.4 Extrinsics](#34-extrinsics)
+  - [3.5 Calibration & delays](#35-calibration--delays)
+- [4. Qualitative Results](#4-qualitative-results)
+- [5. License & Acknowledgements](#5-license--acknowledgements)
+- [6. Star History](#6-star-history)
 
 ---
 ## Overview
+
 ### Highlights
 
 - Unified sliding-window estimator with timestamp-ordered heterogeneous factors.
@@ -33,12 +57,11 @@ The system unifies WIO, VIO, LIO, and LVIO in one configurable optimization fram
 - Online LiDAR-IMU spatiotemporal calibration during operation.
 - Validated on wheeled, legged, and aerial platforms across multiple public benchmarks.
 
-**Go to our [project website](https://sjtuyinjie.github.io/ultrafusion-web/) for more details!**
-
+**See the [project website](https://sjtuyinjie.github.io/ultrafusion-web/) for videos, benchmark tables, and interactive demos!**
 
 ### Method Overview
 
-Ultra-Fusion converts asynchronous sensor streams into optional factors in one optimization window, with shared state representation, marginalization, and calibration logic.
+Ultra-Fusion timestamp-orders asynchronous sensor streams and converts them into optional factors inside one sliding-window optimizer, sharing state representation, marginalization, and calibration logic.
 
 <p align="center">
   <img src="images/pipeline.png" alt="Ultra-Fusion pipeline" width="92%">
@@ -49,12 +72,12 @@ Ultra-Fusion converts asynchronous sensor streams into optional factors in one o
 
 ### Why Ultra-Fusion
 
-Compared with conventional fusion pipelines that are heavily tied to a fixed sensor set, Ultra-Fusion emphasizes:
+Compared with pipelines tied to a fixed sensor set, Ultra-Fusion focuses on:
 
-1. **Configurability**: one framework for WIO/VIO/LIO/LVIO (+ wheel/GNSS).
-2. **Reliability**: robust localization under corner-case degradations.
-3. **Deployability**: support for long-term and high-speed operation in real ITS scenarios.
-4. **Transferability**: validated beyond wheeled robots to legged and aerial platforms.
+1. **Configurability** — one framework for WIO / VIO / LIO / LVIO (+ wheel / GNSS).
+2. **Reliability** — robust localization under corner-case sensor degradation.
+3. **Deployability** — long-duration and high-speed ITS operation.
+4. **Transferability** — validated on wheeled, legged, and aerial platforms.
 
 ---
 
@@ -62,52 +85,44 @@ Compared with conventional fusion pipelines that are heavily tied to a fixed sen
 
 ### Benchmarks and Findings
 
-Ultra-Fusion is evaluated on:
+Ultra-Fusion is evaluated on five public benchmarks:
 
-- [**M3DGR**](https://github.com/sjtuyinjie/M3DGR) (wheeled, real+sim, sensor degradation),
-- [**M2DGR-Plus**](https://github.com/SJTU-ViSYS/M2DGR-plus)(wheeled),
-- [**KAIST (Complex Urban Dataset)**](https://sites.google.com/view/complex-urban-dataset)(autonomous driving),
-- [**GrandTour**](https://github.com/leggedrobotics/grand_tour_dataset) (legged),
-- [**MARS-LVIG**](https://mars.hku.hk/dataset.html) (aerial).
+- [**M3DGR**](https://github.com/sjtuyinjie/M3DGR) — wheeled, real + sim, sensor-degradation stress tests
+- [**M2DGR-Plus**](https://github.com/SJTU-ViSYS/M2DGR-plus) — wheeled, multi-scenario ground SLAM
+- [**KAIST Complex Urban**](https://sites.google.com/view/complex-urban-dataset) — autonomous driving, large-scale urban
+- [**GrandTour**](https://github.com/leggedrobotics/grand_tour_dataset) — legged robots in the wild
+- [**MARS-LVIG**](https://mars.hku.hk/dataset.html) — aerial LVIG fusion
 
-Across these datasets, the paper reports competitive localization performance and improved availability under:
-
-- sensor degradation (visual/LiDAR/wheel/GNSS),
-- temporal/extrinsic perturbations,
-- long-duration and high-speed operation.
-
-
+Reported gains include competitive accuracy and improved localization availability under sensor degradation, calibration perturbation, and long-duration / high-speed operation.
 
 > [!NOTE]
-> We currently release executable binaries and demos. Full source code will be released **after paper acceptance**. Please refer to our prior works [Ground-Fusion](https://github.com/SJTU-ViSYS/Ground-Fusion) and [Ground-Fusion++](https://github.com/sjtuyinjie/Ground-Fusion2) for implementation reference.
+> This repository currently releases **executable binaries and demos**. Full source code will be released after paper acceptance. For related implementations, see [Ground-Fusion](https://github.com/SJTU-ViSYS/Ground-Fusion) and [Ground-Fusion++](https://github.com/sjtuyinjie/Ground-Fusion2).
+
 
 ---
 
-## ⚙️ 1. Prerequisites & Installation
+## 1. Prerequisites & Installation
 
 **Tested platform:** Ubuntu 20.04 + ROS Noetic.
 
-This release ships as a prebuilt `.deb` package (`uf_node` + configs + RViz layout).
-Full source code will be released after paper acceptance.
+The public release is a prebuilt `.deb` that installs `uf_node`, benchmark configs, and an RViz layout under `/opt/ultrafusion/`.
 
 > [!TIP]
-> **We recommend the Docker path (Option A)** — it avoids dependency conflicts on your host and matches our tested runtime environment. Use native install (Option B) only if you prefer running directly on the host.
+> **Recommended: Option A (Docker).** It provides a clean, reproducible runtime and avoids dependency conflicts on your host. Choose Option B (native) only if you need a persistent host installation.
 
-| Path | Best for | What you install |
+| Path | When to use | Summary |
 | --- | --- | --- |
-| **[Option A — Docker](#option-a--docker-install-recommended)** ⭐ | Quick start, reproducible demos | Runtime image in container, then the `.deb` inside |
-| **[Option B — Native](#option-b--native-install)** | Long-term host deployment | ROS Noetic + deps on host, then the `.deb` |
-
-Both paths end with the same `uf_node` binary and config files under `/opt/ultrafusion/`.
+| **[Option A — Docker](#option-a--docker-install-recommended-)** ⭐ | First-time users, quick demos | Pull runtime image → start container → install `.deb` |
+| **[Option B — Native](#option-b--native-install)** | Long-term host deployment | Install ROS + deps on host → install `.deb` |
 
 ---
 
 ### Option A — Docker install (recommended) ⭐
 
-The Docker image provides the **ROS/runtime environment** (Noetic, RViz, Ceres, yaml-cpp, system libs).
-It does **not** include the Ultra-Fusion binary — install the `.deb` inside the container after starting it.
+The image ships **only the ROS/runtime stack** (Noetic, RViz, Ceres, yaml-cpp, system libs).
+You still need to install the Ultra-Fusion `.deb` inside the container.
 
-**Step 1 — Clone this repo (needed for install scripts)**
+**Step 1 — Clone this repository** (mounts into the container as `/workspace`)
 
 ```bash
 git clone https://github.com/sjtuyinjie/Ultra-Fusion.git
@@ -127,9 +142,9 @@ docker pull maotiandocker/ultrafusion:0.1.0
 docker build -t ultrafusion:0.1.0 .
 ```
 
-**Step 3 — Start a container with GUI support**
+**Step 3 — Start a container** (with RViz GUI support)
 
-Mount `/media` if your rosbags live on the host under `/media`.
+Add `-v /media:/media:ro` if your rosbags are stored under `/media` on the host.
 
 ```bash
 xhost +local:docker
@@ -143,15 +158,13 @@ docker run --rm -it --net=host --ipc=host \
   registry.cn-hangzhou.aliyuncs.com/bit_robot_image/ultrafusion:0.1.0
 ```
 
-**Step 4 — Install the release package inside the container**
+**Step 4 — Install Ultra-Fusion inside the container**
 
 ```bash
 cd /workspace
-./scripts/install_ultrafusion_deb.sh
+./scripts/install_ultrafusion_deb.sh   # add --mirror if GitHub is slow
 source /opt/ros/noetic/setup.bash
 ```
-
-Use `./scripts/install_ultrafusion_deb.sh --mirror` if GitHub Releases is slow or unreachable.
 
 **Step 5 — Verify**
 
@@ -160,14 +173,13 @@ which uf_node
 rviz -d /opt/ultrafusion/rviz/lio.rviz
 ```
 
-You are ready to run demos in [§2](#2-run-ultra-fusion-on-five-benchmarks).
+Proceed to [§2 Run on Five Benchmarks](#2-run-on-five-benchmarks).
 
 ---
 
 ### Option B — Native install
 
-Install ROS and runtime libraries directly on Ubuntu 20.04, then install the release package.
-Choose this path if you do not use Docker or need a persistent host setup.
+For users who prefer running directly on the host without Docker.
 
 **Step 1 — Clone and install dependencies**
 
@@ -177,15 +189,15 @@ cd Ultra-Fusion
 ./scripts/install_native_deps.sh
 ```
 
-This script installs ROS Noetic, PCL/OpenCV/Eigen, and builds Ceres 2.1.0 and yaml-cpp 0.8.0.
+Installs ROS Noetic, PCL/OpenCV/Eigen, and builds Ceres 2.1.0 and yaml-cpp 0.8.0.
 
 **Step 2 — Install Ultra-Fusion**
 
 ```bash
-./scripts/install_ultrafusion_deb.sh
+./scripts/install_ultrafusion_deb.sh   # add --mirror if GitHub is slow
 ```
 
-**Step 3 — Source ROS in every new shell**
+**Step 3 — Source ROS** (required in every new shell)
 
 ```bash
 source /opt/ros/noetic/setup.bash
@@ -216,42 +228,49 @@ The `.deb` installs:
 | `/opt/ultrafusion/rviz/lio.rviz` | Default RViz layout |
 
 ---
-## 2. Run Ultra-Fusion on Five Benchmarks
-### 🔥2.1 Run Ultra-Fusion on M3DGR
-Download [**M3DGR**](https://github.com/sjtuyinjie/M3DGR) bags and give a star.
-Start ROS and play your bag in the usual ROS way. Use one terminal for
-`roscore`, one terminal for `rosbag play`, and one terminal for `uf_node`.
+## 2. Run on Five Benchmarks
+
+Each released `uf_node <shortcut>` command maps to a YAML profile under `/opt/ultrafusion/config/`.
+You can also pass a config path directly: `uf_node /path/to/config.yaml`.
+
+**Typical workflow** — open three terminals:
+
+| Terminal | Command |
+| --- | --- |
+| 1 | `roscore` |
+| 2 | `rosbag play /path/to/your.bag --clock` |
+| 3 | `uf_node <shortcut>` |
+
+Open RViz in a fourth terminal (optional): `rviz -d /opt/ultrafusion/rviz/lio.rviz`
+
+### 2.1 M3DGR
+
+Download [**M3DGR**](https://github.com/sjtuyinjie/M3DGR) rosbags and run:
 
 ```bash
-#play your bag
-roscore & rosbag play /media/path/to/your.bag --clock
+# Terminal 1
+roscore
+
+# Terminal 2
+rosbag play /media/path/to/your.bag --clock
+
+# Terminal 3
+uf_node m3dgr                  # default (= m3dgr_standard)
+# uf_node m3dgr_standard       # standard LVWIO profile
+# uf_node m3dgr_image_enhance  # stronger visual coupling
 ```
 
-Run Ultra-Fusion in another shell:
+**Released profiles:**
 
-```bash
-#default setting
-uf_node m3dgr
-
-#standard LWIO
-uf_node m3dgr_standard
-
-#Stronger vision-coupling
-uf_node m3dgr_image_enhance
-```
-
-M3DGR public release profiles:
-
-| Command | Config | Recommended benchmark setting |
+| Command | Config | Recommended sequences |
 | --- | --- | --- |
-| `uf_node m3dgr` | `/opt/ultrafusion/config/m3dgr/uf_m3dgr_standard.yaml` | Default M3DGR standard profile |
-| `uf_node m3dgr_standard` | `/opt/ultrafusion/config/m3dgr/uf_m3dgr_standard.yaml` | Standard wheeled LVWIO profile: Dynamic01, Varying-illu01, Dark01, and Occlusion01 |
-| `uf_node m3dgr_image_enhance` | `/opt/ultrafusion/config/m3dgr/uf_m3dgr_image_enhance.yaml` | Stronger visual-coupling profile: Corridor01, GNSS-denial01, Longtime01, and Longtime02 |
+| `uf_node m3dgr` | `.../m3dgr/uf_m3dgr_standard.yaml` | Default M3DGR profile (alias of `m3dgr_standard`) |
+| `uf_node m3dgr_standard` | `.../m3dgr/uf_m3dgr_standard.yaml` | Dynamic01, Varying-illu01, Dark01, Occlusion01 |
+| `uf_node m3dgr_image_enhance` | `.../m3dgr/uf_m3dgr_image_enhance.yaml` | Corridor01, GNSS-denial01, Longtime01, Longtime02 |
 
+> Legacy aliases `uf_node m3dgr_01` and `uf_node m3dgr_02` remain supported.
 
-**Demo preview (M3DGR).** After launching `uf_node` with the profile above and
-playing the corresponding M3DGR bag in RViz (`/opt/ultrafusion/rviz/lio.rviz`),
-you should see live LiDAR mapping and trajectory overlays similar to:
+**Expected output (M3DGR)** — live LiDAR map + trajectory in RViz:
 
 <table>
   <tr>
@@ -267,7 +286,7 @@ you should see live LiDAR mapping and trajectory overlays similar to:
       <br>
       <strong>GNSS-denial01</strong> · <code>uf_node m3dgr_image_enhance</code>
       <br>
-      <em>Continuous estimation when GNSS measurements are unavailable.</em>
+      <em>Continuous state estimation when GNSS measurements are unavailable.</em>
     </td>
     <td width="33%" align="center">
       <img src="images/gifs/longtime02_full.gif" alt="M3DGR Longtime02 demo" width="100%">
@@ -279,29 +298,18 @@ you should see live LiDAR mapping and trajectory overlays similar to:
   </tr>
 </table>
 
-### 🔥2.2 Run Ultra-Fusion on more datasets
+### 2.2 Other datasets
 
-These additional public shortcuts are included for reproducibility. The table
-lists the dataset sequences/settings covered by the released profiles. Sequences
-not listed here are outside the public release profile coverage and may require
-separate parameter retuning.
+Additional shortcuts for cross-platform reproducibility. Sequences not listed may need parameter retuning.
 
-| Command | Config | Recommended sequences/settings |
+| Command | Config | Recommended sequences |
 | --- | --- | --- |
-| `uf_node m2p` | `/opt/ultrafusion/config/m2p/uf_m2p.yaml` | M2DGR-Plus bridge1-style LVWIO setting |
-| `uf_node lvig` | `/opt/ultrafusion/config/lvig/uf_lvig.yaml` | MARS-LVIG HKairport01 LVIO setting |
-| `uf_node kaist` | `/opt/ultrafusion/config/kaist/uf_kaist.yaml` | KAIST urban25 and urban35 |
-| `uf_node groundtour` | `/opt/ultrafusion/config/groundtour/uf_groundtour.yaml` | GrandTour SPX-2, SNOW-2, and EIG-1 |
+| `uf_node m2p` | `.../m2p/uf_m2p.yaml` | M2DGR-Plus bridge1-style LVWIO |
+| `uf_node lvig` | `.../lvig/uf_lvig.yaml` | MARS-LVIG HKairport01 LVIO |
+| `uf_node kaist` | `.../kaist/uf_kaist.yaml` | KAIST urban25, urban35 |
+| `uf_node groundtour` | `.../groundtour/uf_groundtour.yaml` | GrandTour SPX-2, SNOW-2, EIG-1 |
 
-You can also pass a config path directly:
-
-```bash
-uf_node /opt/ultrafusion/config/m3dgr/uf_m3dgr_standard.yaml
-```
-
-**Demo preview (more datasets).** The GIFs below match the released shortcuts
-in the table above. Run the corresponding `uf_node` command, play the
-recommended sequence, and compare your RViz output with:
+**Expected output (other datasets)** — compare your RViz playback with:
 
 <table>
   <tr>
@@ -317,7 +325,7 @@ recommended sequence, and compare your RViz output with:
       <br>
       <strong>KAIST urban25/35</strong> · <code>uf_node kaist</code>
       <br>
-      <em>Large-scale LiDAR mapping with vehicle trajectory visualization.</em>
+      <em>Large-scale LiDAR mapping with high-speed vehicle trajectory visualization.</em>
     </td>
     <td width="33%" align="center">
       <img src="images/gifs/lvig_full.gif" alt="MARS-LVIG aerial demo" width="100%">
@@ -330,14 +338,10 @@ recommended sequence, and compare your RViz output with:
 </table>
 
 
-## 3 Custom profiles: modes, GNSS, extrinsics, and delays
+## 3. Custom Profiles
 
-The released commands above are aliases for YAML files under
-`/opt/ultrafusion/config`. For a custom setup, copy the closest released config
-directory so the main YAML and its camera-intrinsic files keep the same relative
-layout. Avoid writing a minimal file from scratch: the runtime still reads
-shared camera, mapping, and noise fields at startup, and reads wheel fields when
-`wheel: 1`.
+Released shortcuts are aliases to YAML files under `/opt/ultrafusion/config/`.
+To customize, **copy the closest profile directory** so camera-intrinsic files keep their relative paths. Avoid creating a minimal YAML from scratch — the runtime expects the full field set at startup.
 
 ```bash
 WORK=/tmp/uf_config
@@ -353,10 +357,9 @@ uf_node "$CFG" &
 rosbag play /media/path/to/your.bag --clock
 ```
 
-`uf_node` reads the YAML only at startup. Restart `uf_node` after changing the
-copied config.
+> `uf_node` reads YAML only at startup — restart it after any config change.
 
-### 3.1 Fusion mode switches
+### 3.1 Fusion modes
 
 Keep `imu: 1` for the modes below. Visual sensing is selected by `use_image`.
 `use_gf_standalone_vio` is not the UF visual switch: in the current runtime it
@@ -396,7 +399,7 @@ common:
 
 
 
-## 3.2 Camera intrinsic files
+### 3.2 Camera intrinsics
 
 Camera intrinsics are not stored in the main UF YAML. The main YAML points to
 camodocal/OpenCV calibration YAML files:
@@ -443,7 +446,7 @@ profiles, keep it consistent with the released template. RGB-D depth input is
 controlled by `depth: 1` and `common.image1_topic`, not by giving the depth image
 its own camera-intrinsic YAML.
 
-### 3.3 Optional GNSS fusion
+### 3.3 GNSS fusion
 
 GNSS is independent of the LiDAR/visual/wheel mode switches. UF estimator paths
 can add raw GNSS pseudorange/Doppler factors and position-only
@@ -476,7 +479,7 @@ position in the estimator body/IMU frame. Do not enable raw GNSS without the
 matching ephemeris topics; use position-only GNSS in a UF estimator profile or
 leave GNSS off.
 
-### 3.4 Extrinsic convention
+### 3.4 Extrinsics
 
 All extrinsics are under `mapping`. Ultra-Fusion uses `T_A_B` to mean
 "transform a point from frame `B` into frame `A`":
@@ -508,7 +511,7 @@ There is no public YAML flag named `estimate_wheel_extrinsic`. To change the
 wheel extrinsic, provide `extrinsic_TIO/RIO` directly or provide a correct
 `extrinsic_TOL/ROL` so UF can derive `T_I_O`.
 
-### 3.5 Calibration and delay fields
+### 3.5 Calibration & delays
 
 For fixed calibration, keep both visual online-calibration flags at zero:
 
@@ -582,12 +585,11 @@ biased trajectory is often a frame or time-offset error, not just solver tuning.
 </p>
 <p align="center"><em>Trajectory estimation examples on ground, legged, and UAV datasets.</em></p>
 
-> For full-scene playback demos (LiDAR cloud + trajectory in RViz), see
-> **Demo preview** under **§2.1** (M3DGR) and **§2.2** (other datasets) above.
+> For full-scene playback demos, see **Expected output** in [§2.1](#21-m3dgr) and [§2.2](#22-other-datasets).
 
 ---
 
-## 5. License and Acknowledgements
+## 5. License & Acknowledgements
 
 This project is licensed under the MIT License. If you find this project useful, please cite:
 
@@ -633,9 +635,8 @@ Please also consider citing our previous works related to this project:
   publisher={IEEE}
 }
 ```
-This work is self-funded. Thanks Tianbao Zhang for providing computation for some time. For code maitaining, collaboration or bussiness, contact maotian616@gmail.com.
+This work is self-funded. Thanks to Tianbao Zhang for providing computation resources. For maintenance, collaboration, or business inquiries, contact maotian616@gmail.com.
 
-
-## 6. Star History 
+## 6. Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=sjtuyinjie/Ultra-Fusion&type=Timeline)](https://star-history.com/#Ashutosh00710/github-readme-activity-graph&Timeline)

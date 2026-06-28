@@ -313,7 +313,7 @@ Additional shortcuts for cross-platform reproducibility. Download rosbags first,
 | [M2DGR-Plus](https://github.com/SJTU-ViSYS/M2DGR-plus) | Wheeled ground | [Sequence table](https://github.com/SJTU-ViSYS/M2DGR-plus#3dataset-sequences) | Bridge_01, Bridge_02 |
 | [MARS-LVIG](https://mars.hku.hk/dataset.html) | Aerial UAV | [Google Drive rosbags](https://drive.google.com/drive/folders/1aG21le4QZl9LhSLE1O0vuVDQ8YgAwdas) | HKairport01–03, AMtown/AMvalley, HKisland |
 | [KAIST Complex Urban](https://sites.google.com/view/complex-urban-dataset) | Urban driving | [LiDAR + Stereo download](https://sites.google.com/view/complex-urban-dataset/download-lidar-stereo) | urban25, urban35 (request access on the page) |
-| [GrandTour](https://github.com/leggedrobotics/grand_tour_dataset) | Legged robot | [Dataset repo](https://github.com/leggedrobotics/grand_tour_dataset) | SPX-2, SNOW-2, EIG-1 |
+| [GrandTour](https://github.com/leggedrobotics/grand_tour_dataset) | Legged robot | [rosbag download](https://github.com/leggedrobotics/grand_tour_dataset#ros1-instructions) | SPX-2, SNOW-2, EIG-1 |
 
 | Command | Config | Recommended sequences |
 | --- | --- | --- |
